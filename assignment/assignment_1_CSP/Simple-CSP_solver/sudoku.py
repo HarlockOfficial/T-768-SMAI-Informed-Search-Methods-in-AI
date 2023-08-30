@@ -4,8 +4,10 @@
 # Converts Sudoku puzzles to constraints for our Simple-CSP solver.
 #
 
+import math
 import sys
 from pathlib import Path
+
 
 def read_puzzles(name):
     """
@@ -46,7 +48,7 @@ def write_puzzle_constraints(name, constraints):
     """
     with open(name, 'w') as f:
         for c in constraints:
-            f.write( '(' )
+            f.write('(')
             f.write(str(c[0]))
             f.write(',')
             f.write(str(c[1]))
@@ -84,10 +86,10 @@ def generate_domains(puzzles):
         p = puzzles[i]
         for j in p:
             if j == 0:
-                domains.append(set([i for i in range(1,int(math.sqrt(len(p)) + 1))]))
+                domains.append(set([i for i in range(1, int(math.sqrt(len(p)) + 1))]))
             else:
                 domains.append(set([j]))
-        L.append(domains)        
+        L.append(domains)
     return L
 
 
@@ -106,20 +108,20 @@ def generate_constraints():
     for i in L:
         for j in L:
             if i % 9 == j % 9 and i != j:
-                constraints.add(((min(i,j)), max(i,j)))
+                constraints.add(((min(i, j)), max(i, j)))
 
     for n in range(9):
         for i in range(9):
             for j in range(i):
-                constraints.add((min(i + 9*n, j + 9*n),max(i + 9*n , j + 9*n)))
+                constraints.add((min(i + 9 * n, j + 9 * n), max(i + 9 * n, j + 9 * n)))
 
     for m in range(3):
         for n in range(3):
-            for k in range(2): 
+            for k in range(2):
                 for i in range(3):
                     for j in range(3):
-                        constraints.add((27*m + i + (9*k) + 3*n , 27*m + j+9 + 9*k + 3*n))
-                        constraints.add((27*m + i + 3*n, 27*m + j + 9 + 9*k + 3*n))
+                        constraints.add((27 * m + i + (9 * k) + 3 * n, 27 * m + j + 9 + 9 * k + 3 * n))
+                        constraints.add((27 * m + i + 3 * n, 27 * m + j + 9 + 9 * k + 3 * n))
 
     return sorted(constraints)
 
@@ -133,8 +135,8 @@ def generate_constraints():
 #
 
 name = 'sudoku'
-input_puzzle_file = name + '.txt' # 'sudoku.txt' is the default expected input file name, but it can be overwritten
-if len(sys.argv) == 2:            # by specifying an alternative name as a command-line argument.
+input_puzzle_file = name + '.txt'  # 'sudoku.txt' is the default expected input file name, but it can be overwritten
+if len(sys.argv) == 2:  # by specifying an alternative name as a command-line argument.
     input_puzzle_file = sys.argv[1]
     name = Path(input_puzzle_file).stem
     assert len(name) > 0
@@ -145,10 +147,11 @@ print('Processing puzzles from file', input_puzzle_file)
 puzzles = read_puzzles(input_puzzle_file)
 print('Read in', len(puzzles), 'Sudoku puzzle instances.')
 
-print( 'Generating and writing domains to file', output_domains_file)
+print('Generating and writing domains to file', output_domains_file)
 domains = generate_domains(puzzles)
-write_puzzles_domains( name + "_dom.txt", domains)
+write_puzzles_domains(name + "_dom.txt", domains)
 
-print( 'Generating and writing constraints to file', output_constraints_file)
-constraints = generate_constraints()                           # Generate and write out the constraints for Sudoku.
-write_puzzle_constraints(output_constraints_file, constraints) # Note, the constraints are independent of the instances.
+print('Generating and writing constraints to file', output_constraints_file)
+constraints = generate_constraints()  # Generate and write out the constraints for Sudoku.
+write_puzzle_constraints(output_constraints_file,
+                         constraints)  # Note, the constraints are independent of the instances.

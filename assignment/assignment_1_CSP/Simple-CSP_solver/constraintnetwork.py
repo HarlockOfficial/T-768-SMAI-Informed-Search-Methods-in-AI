@@ -7,7 +7,7 @@
 class ConstraintNetwork:
 
     @staticmethod
-    def ordered_pair( i, j):
+    def ordered_pair(i, j):
         if i < j:
             return (i, j)
         else:
@@ -19,8 +19,8 @@ class ConstraintNetwork:
         """
         self.num_vars = n
         self.constraints_all = []
-        self.constraints = [ set() for _ in range(0,n) ]
-        self.domains = [ set() for _ in range(0,n) ]
+        self.constraints = [set() for _ in range(0, n)]
+        self.domains = [set() for _ in range(0, n)]
 
     def __str__(self):
         """
@@ -59,7 +59,7 @@ class ConstraintNetwork:
         Returns a sorted copy of the domain of variable i as a list.
         """
         assert 0 <= i < self.num_vars
-        return sorted( self.get_domain(i) )
+        return sorted(self.get_domain(i))
 
     def add_ne_constraint(self, i, j):
         """
@@ -68,7 +68,7 @@ class ConstraintNetwork:
         assert 0 <= i < self.num_vars
         assert 0 <= j < self.num_vars
         assert i != j
-        ( i, j ) = self.ordered_pair(i, j)
+        i, j = self.ordered_pair(i, j)
         self.constraints_all.append((i, j))
         self.constraints[i].add(j)
         self.constraints[j].add(i)
@@ -115,7 +115,7 @@ class ConstraintNetwork:
         assert len(A) <= self.num_vars
         assert 0 <= i < len(A)
         for j in range(len(A)):
-            if i != j and not self.consistent(i,j,A):
+            if i != j and not self.consistent(i, j, A):
                 return False
         return True
 

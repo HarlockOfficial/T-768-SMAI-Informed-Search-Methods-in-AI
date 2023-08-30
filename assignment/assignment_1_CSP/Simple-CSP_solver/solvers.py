@@ -3,18 +3,19 @@
 #
 # Implementation of various backtracking-based solvers.
 #
-
 from enum import Enum
+
+import constraintnetwork
 
 
 class SolverType(Enum):
-    GTBT = 1        # Generate-and-test Backtracking
-    BT = 2          # Cronological Backtracking
-    BJ = 3          # Backjumping
-    CBJ = 4         # Conflict-Directed Backjumping
+    GTBT = 1  # Generate-and-test Backtracking
+    BT = 2  # Cronological Backtracking
+    BJ = 3  # Backjumping
+    CBJ = 4  # Conflict-Directed Backjumping
 
 
-def make_arc_consistent(cn):
+def make_arc_consistent(cn: constraintnetwork.ConstraintNetwork):
     """
     Makes the cn constraint network arc-consistent (use the AC-3 algorithm).
     (there are no unary-constraints, so you can omit making it first node-consistent).
@@ -39,18 +40,18 @@ def solve(st, cnet):
                 return j
         return i
 
-    def GTB(cn, i, A):
+    def GTB(cn, current_index, assigned_values):
         # print(A)
         nonlocal num_nodes
         num_nodes += 1
-        if i >= cn.num_variables():
-            return cn.consistent_all(A)
-        for v in cn.get_sorted_domain(i):
-            A.append(v)
-            solved = GTB(cn, i+1, A)
+        if current_index >= cn.num_variables():
+            return cn.consistent_all(assigned_values)
+        for v in cn.get_sorted_domain(current_index):
+            assigned_values.append(v)
+            solved = GTB(cn, current_index + 1, assigned_values)
             if solved:
                 return True
-            A.pop()
+            assigned_values.pop()
         return False
 
     def BT(cn, i, A):
@@ -66,7 +67,7 @@ def solve(st, cnet):
     def CBJ(cn, i, A, CS):
         # ===> Your task is to implement this routine.
         ...
-        return (False, 0)
+        return False, 0
 
     num_nodes = 0
     assignment = []
@@ -78,8 +79,8 @@ def solve(st, cnet):
     elif st == SolverType.BT:
         is_solved = BT(cnet, 0, assignment)
     elif st == SolverType.BJ:
-        (is_solved, _) = BJ(cnet, 0, assignment)
+        is_solved, _ = BJ(cnet, 0, assignment)
     elif st == SolverType.CBJ:
-        (is_solved, _) = CBJ(cnet, 0, assignment, conflict_set)
+        is_solved, _ = CBJ(cnet, 0, assignment, conflict_set)
 
-    return (assignment, num_nodes)
+    return assignment, num_nodes

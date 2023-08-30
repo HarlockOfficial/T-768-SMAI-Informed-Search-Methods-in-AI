@@ -7,9 +7,10 @@
 #
 import argparse
 import re
+from timeit import default_timer as timer
+
 import constraintnetwork
 import solvers
-from timeit import default_timer as timer
 
 
 def log_string(text):
@@ -38,7 +39,7 @@ def read_domains_of_instances(filename):
                     domains.append(domain_from_str(line))
             instances_domains.append(domains)
     except FileNotFoundError:
-        print("File", "'"+name+"'", "not found.")
+        print("File", "'" + name + "'", "not found.")
     return instances_domains
 
 
@@ -73,8 +74,8 @@ def solution_str(sol, max_elem):
     n = min(max_elem, len(sol))
     # print(sol, max_elem, n)
     if max_elem > 0:
-        s = '[' + ','.join(str(s) for s in sol[0:max_elem//2]) + ",...," +\
-                   ','.join(str(s) for s in sol[-(max_elem-max_elem//2):]) + ']'
+        s = '[' + ','.join(str(s) for s in sol[0:max_elem // 2]) + ",...," + ','.join(
+            str(s) for s in sol[-(max_elem - max_elem // 2):]) + ']'
     else:
         s = '[' + ','.join(str(s) for s in sol) + ']'
     return s
@@ -86,13 +87,13 @@ def solution_str(sol, max_elem):
 # Set up and parse command-line arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-g", "--gtbt", choices=['on', 'off'], default='on', help="Run the GTBT solver.")
-ap.add_argument("-b", "--bt",   choices=['on', 'off'], default='on', help="Run the the BT solver.")
-ap.add_argument("-j", "--bj",   choices=['on', 'off'], default='on', help="Run the BJ solver.")
-ap.add_argument("-c", "--cbj",  choices=['on', 'off'], default='on', help="Run the CBJ solver.")
+ap.add_argument("-b", "--bt", choices=['on', 'off'], default='on', help="Run the the BT solver.")
+ap.add_argument("-j", "--bj", choices=['on', 'off'], default='on', help="Run the BJ solver.")
+ap.add_argument("-c", "--cbj", choices=['on', 'off'], default='on', help="Run the CBJ solver.")
 ap.add_argument("-i", "--instance", type=int, action='append', help="Run only specified puzzle instance.")
-ap.add_argument("-t", "--time",  choices=['on', 'off'], default='on', help="Display runtime (in seconds).")
-ap.add_argument("-a", "--arc",  choices=['on', 'off'], default='off', help="Make constraint network arc consistent.")
-ap.add_argument("-l", "--len",  type=int, choices=range(0, 1000), default=0, help="Display solution with max n elem")
+ap.add_argument("-t", "--time", choices=['on', 'off'], default='on', help="Display runtime (in seconds).")
+ap.add_argument("-a", "--arc", choices=['on', 'off'], default='off', help="Make constraint network arc consistent.")
+ap.add_argument("-l", "--len", type=int, choices=range(0, 1000), default=0, help="Display solution with max n elem")
 ap.add_argument("-name", default='sudoku', help="Basename of constraint and instances files (e.g. sudoku).")
 
 args = vars(ap.parse_args())
@@ -132,7 +133,7 @@ for solver_type in solvers_to_run:
             (solution, nodes) = solvers.solve(solver_type, csp)
             end = timer()
             if do_display_time:
-                output = "{:3d} {:15s} {:10d} {:9.4f} {:s}".format(i, str(solver_type), nodes, end-start,
+                output = "{:3d} {:15s} {:10d} {:9.4f} {:s}".format(i, str(solver_type), nodes, end - start,
                                                                    solution_str(solution, len_sol))
             else:
                 output = "{:3d} {:15s} {:10d} {:s}".format(i, str(solver_type), nodes, solution_str(solution, len_sol))
