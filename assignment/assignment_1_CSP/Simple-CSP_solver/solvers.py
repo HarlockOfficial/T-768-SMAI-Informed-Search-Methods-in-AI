@@ -50,7 +50,7 @@ def make_arc_consistent(cn: constraintnetwork.ConstraintNetwork):
         # If not, remove from queue
         if revise == False:
             q.pop(0)
-        
+
         # If yes, remove from queue and add applicable pairs to queue
         else:
             temp = q.pop(0)
