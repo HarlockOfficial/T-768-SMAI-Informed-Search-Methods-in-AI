@@ -54,9 +54,23 @@ def solve(st, cnet):
             assigned_values.pop()
         return False
 
-    def BT(cn, i, A):
-        # ===> Your task is to implement this routine.
-        ...
+    def BT(constraint_network, current_index, assigned_values):
+        """
+        Backtracking algorithm.
+        """
+        nonlocal num_nodes
+        num_nodes += 1
+
+        if current_index >= constraint_network.num_variables():
+            return constraint_network.consistent_all(assigned_values)
+
+        for value in constraint_network.get_sorted_domain(current_index):
+            assigned_values.append(value)
+            if consistent_upto_level(constraint_network, current_index, assigned_values) == current_index:
+                solved = BT(constraint_network, current_index + 1, assigned_values)
+                if solved:
+                    return True
+            assigned_values.pop()
         return False
 
     def BJ(cn, i, A):
