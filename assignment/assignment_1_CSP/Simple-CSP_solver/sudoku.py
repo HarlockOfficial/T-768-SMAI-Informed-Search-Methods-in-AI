@@ -78,9 +78,17 @@ def generate_domains(puzzles):
     """
 
     # ===> Your task is to implement this routine. Feel free to add sub-routines as needed.
-    ...
-
-    return []
+    L = []
+    for i in range(len(puzzles)):
+        domains = []
+        p = puzzles[i]
+        for j in p:
+            if j == 0:
+                domains.append(set([i for i in range(1,int(math.sqrt(len(p)) + 1))]))
+            else:
+                domains.append(set([j]))
+        L.append(domains)        
+    return L
 
 
 def generate_constraints():
@@ -94,7 +102,24 @@ def generate_constraints():
 
     # ===> Your task is to implement this routine. Feel free to add sub-routines as needed.
     constraints = set()
-    ...
+    L = [i for i in range(81)]
+    for i in L:
+        for j in L:
+            if i % 9 == j % 9 and i != j:
+                constraints.add(((min(i,j)), max(i,j)))
+
+    for n in range(9):
+        for i in range(9):
+            for j in range(i):
+                constraints.add((min(i + 9*n, j + 9*n),max(i + 9*n , j + 9*n)))
+
+    for m in range(3):
+        for n in range(3):
+            for k in range(2): 
+                for i in range(3):
+                    for j in range(3):
+                        constraints.add((27*m + i + (9*k) + 3*n , 27*m + j+9 + 9*k + 3*n))
+                        constraints.add((27*m + i + 3*n, 27*m + j + 9 + 9*k + 3*n))
 
     return sorted(constraints)
 
