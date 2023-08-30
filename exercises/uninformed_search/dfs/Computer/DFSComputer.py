@@ -42,6 +42,7 @@ class DFSComputer(object):
         if self._computed:
             self._path = []
             self._computed = False
+
         if current is None:
             current = self._structure.get_node(start)
             self._setup_structure()
@@ -49,18 +50,25 @@ class DFSComputer(object):
             current.add_attribute("parent", None)
             current.add_attribute("visited", True)
             assert current == self._structure.get_node(start)
-        if current == self._structure.get_node(end):
-            self._save_path(self._structure.get_node(start), self._structure.get_node(end))
-            self._computed = True
-            return True
-        for child in self._structure.get_all_children(current):
-            if (not child.get_attribute("visited") or
-                    child.get_attribute("distance") > current.get_attribute("distance") + 1):
-                child.add_attribute("visited", True)
-                child.add_attribute("distance", current.get_attribute("distance") + 1)
-                child.add_attribute("parent", current)
-                if self.compute_approach_2_recursive(start, end, child):
-                    return True
+
+        def recursive_visit(current_node):
+            if current_node == self._structure.get_node(end):
+                return True
+            for child in self._structure.get_all_children(current_node):
+                if (not child.get_attribute("visited") or
+                        child.get_attribute("distance") > current_node.get_attribute("distance") + 1):
+                    child.add_attribute("visited", True)
+                    child.add_attribute("distance", current_node.get_attribute("distance") + 1)
+                    child.add_attribute("parent", current_node)
+                    if recursive_visit(child):
+                        return True
+            return False
+
+        result = recursive_visit(current)
+        if not result:
+            raise ValueError("Path not found")
+        self._save_path(self._structure.get_node(start), self._structure.get_node(end))
+        self._computed = True
 
     def _setup_structure(self, node=None):
         if node is None:
