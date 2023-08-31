@@ -6,6 +6,7 @@
 from enum import Enum
 
 import constraintnetwork
+import sudoku
 
 
 class SolverType(Enum):
@@ -22,9 +23,45 @@ def make_arc_consistent(cn: constraintnetwork.ConstraintNetwork):
     """
 
     # ===> Your task is to implement this routine. Feel free to add sub-routines as needed.
-    ...
 
-    return
+    # Generate queue of all constraints
+    q = sudoku.generate_constraints()
+    r = []
+    for i in q:
+        r.append((i[1],i[0]))
+    q = sorted(q + r)
+
+    # Assigns domain of variables at start of queue
+    while len(q) > 0:
+        dom = cn.get_domain(q[0][0])
+        dom2 = cn.get_domain(q[0][1])
+        revise = False
+
+        # Checks if a value can be removed from the domain
+        for i in cn.get_domain(q[0][0]):
+            if i in cn.get_domain(q[0][1]) and len(cn.get_domain(q[0][1])) == 1:
+                revise = True
+                point = i
+                cn.get_domain(q[0][0]).remove(point)
+                break
+            else:
+                pass
+
+        # If not, remove from queue
+        if revise == False:
+            q.pop(0)
+        
+        # If yes, remove from queue and add applicable pairs to queue
+        else:
+            temp = q.pop(0)
+            const = sudoku.generate_constraints()
+            for k in const:
+                if k[0] == i:
+                    q.append((k[1],k[0]))
+                elif k[1] == i:
+                    q.append(k)
+
+    return cn
 
 
 def solve(st, cnet):

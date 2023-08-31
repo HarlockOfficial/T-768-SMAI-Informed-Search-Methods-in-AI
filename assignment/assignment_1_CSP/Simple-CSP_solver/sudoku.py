@@ -80,6 +80,8 @@ def generate_domains(puzzles):
     """
 
     # ===> Your task is to implement this routine. Feel free to add sub-routines as needed.
+
+    # If variable is 0, include whole domain, otherwise, include only that number in domain
     L = []
     for i in range(len(puzzles)):
         domains = []
@@ -103,6 +105,8 @@ def generate_constraints():
     """
 
     # ===> Your task is to implement this routine. Feel free to add sub-routines as needed.
+
+    # Creates a constraint for every variable in the same column
     constraints = set()
     L = [i for i in range(81)]
     for i in L:
@@ -110,11 +114,14 @@ def generate_constraints():
             if i % 9 == j % 9 and i != j:
                 constraints.add(((min(i, j)), max(i, j)))
 
+
+    # Creates a constraint for every variable in the same row
     for n in range(9):
         for i in range(9):
             for j in range(i):
                 constraints.add((min(i + 9 * n, j + 9 * n), max(i + 9 * n, j + 9 * n)))
 
+    # Creates a constraint for every variable in one of nine 3x3 boxes
     for m in range(3):
         for n in range(3):
             for k in range(2):
