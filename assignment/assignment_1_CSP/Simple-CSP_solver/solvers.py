@@ -117,10 +117,7 @@ def solve(st, cnet):
         num_nodes += 1
 
         if current_index >= constraint_network.num_variables():
-            inconsistency_index = consistent_upto_level(constraint_network, current_index-1, assigned_values)
-            if inconsistency_index == current_index-1:
-                return True, -1
-            return False, inconsistency_index
+            return True, -1
 
         max_jump_level = -1
         for value in constraint_network.get_sorted_domain(current_index):
@@ -147,10 +144,7 @@ def solve(st, cnet):
         num_nodes += 1
 
         if current_index >= constraint_network.num_variables():
-            inconsistency_index = consistent_upto_level(constraint_network, current_index - 1, assigned_values)
-            if inconsistency_index == current_index - 1:
-                return True, -1
-            return False, inconsistency_index
+            return True, -1
 
         for value in constraint_network.get_sorted_domain(current_index):
             non_consistent_index = consistent_upto_level(constraint_network, current_index, assigned_values + [value])
