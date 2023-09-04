@@ -91,15 +91,55 @@ def solve(st, cnet):
             assigned_values.pop()
         return False
 
-    def BT(cn, i, A):
-        # ===> Your task is to implement this routine.
-        ...
+    def BT(constraint_network, current_index, assigned_values):
+        """
+        Backtracking algorithm.
+        """
+        nonlocal num_nodes
+        num_nodes += 1
+
+        if current_index >= constraint_network.num_variables():
+            return constraint_network.consistent_all(assigned_values)
+
+        for value in constraint_network.get_sorted_domain(current_index):
+            assigned_values.append(value)
+            if consistent_upto_level(constraint_network, current_index, assigned_values) == current_index:
+                solved = BT(constraint_network, current_index + 1, assigned_values)
+                if solved:
+                    return True
+            assigned_values.pop()
         return False
 
-    def BJ(cn, i, A):
-        # ===> Your task is to implement this routine.
-        ...
-        return (False, 0)
+    def BJ(constraint_network, current_index, assigned_values):
+        """
+        Backjumping algorithm.
+        """
+        # TODO check: does not lower the number of visited nodes
+        nonlocal num_nodes
+        num_nodes += 1
+
+        if current_index >= constraint_network.num_variables():
+            if constraint_network.consistent_all(assigned_values):
+                return True, -1
+            inconsistency_index = consistent_upto_level(constraint_network, current_index-1, assigned_values)
+            return False, inconsistency_index
+
+        inconsistency_index_list = []
+        for value in constraint_network.get_sorted_domain(current_index):
+            inconsistency_index = consistent_upto_level(constraint_network, current_index, assigned_values + [value])
+            if inconsistency_index < current_index:
+                inconsistency_index_list.append(inconsistency_index)
+                continue
+            assigned_values.append(value)
+            result, inconsistency_index = BJ(constraint_network, current_index + 1, assigned_values)
+            if result:
+                return True, -1
+            assigned_values.pop()
+            inconsistency_index_list.append(inconsistency_index)
+            if inconsistency_index < current_index:
+                return False, max(inconsistency_index_list)
+        return False, max(inconsistency_index_list)
+
 
     def CBJ(cn, i, A, CS):
         # ===> Your task is to implement this routine.
