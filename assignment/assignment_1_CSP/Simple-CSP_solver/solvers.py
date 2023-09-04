@@ -140,10 +140,33 @@ def solve(st, cnet):
         return False, max_jump_level
 
 
-    def CBJ(cn, i, A, CS):
-        # ===> Your task is to implement this routine.
-        ...
-        return False, 0
+    def CBJ(constraint_network, current_index, assigned_values, conflict_set):
+        """
+        Conflict-directed Backjumping algorithm.
+        """
+        nonlocal num_nodes
+        num_nodes += 1
+
+        if current_index >= constraint_network.num_variables():
+            inconsistency_index = consistent_upto_level(constraint_network, current_index - 1, assigned_values)
+            if inconsistency_index == current_index - 1:
+                return True, -1
+            return False, inconsistency_index
+
+        for value in constraint_network.get_sorted_domain(current_index):
+            non_consistent_index = consistent_upto_level(constraint_network, current_index, assigned_values + [value])
+            if non_consistent_index < current_index:
+                conflict_set[current_index].add(non_consistent_index)
+                continue
+            assigned_values.append(value)
+            solved, conflict_level = CBJ(constraint_network, current_index + 1, assigned_values, conflict_set)
+            if solved:
+                return True, -1
+            assigned_values.pop()
+            conflict_set[current_index].add(non_consistent_index)
+            if conflict_level < current_index:
+                return False, conflict_level
+        return False, max(conflict_set[current_index])
 
     num_nodes = 0
     assignment = []
