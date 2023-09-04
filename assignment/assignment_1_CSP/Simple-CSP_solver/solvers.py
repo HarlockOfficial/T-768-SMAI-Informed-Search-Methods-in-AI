@@ -114,31 +114,30 @@ def solve(st, cnet):
         """
         Backjumping algorithm.
         """
-        # TODO check: does not lower the number of visited nodes
         nonlocal num_nodes
         num_nodes += 1
 
         if current_index >= constraint_network.num_variables():
-            if constraint_network.consistent_all(assigned_values):
-                return True, -1
             inconsistency_index = consistent_upto_level(constraint_network, current_index-1, assigned_values)
+            if inconsistency_index == current_index-1:
+                return True, -1
             return False, inconsistency_index
 
-        inconsistency_index_list = []
+        max_jump_level = -1
         for value in constraint_network.get_sorted_domain(current_index):
             inconsistency_index = consistent_upto_level(constraint_network, current_index, assigned_values + [value])
             if inconsistency_index < current_index:
-                inconsistency_index_list.append(inconsistency_index)
+                max_jump_level = max(max_jump_level, inconsistency_index)
                 continue
             assigned_values.append(value)
             result, inconsistency_index = BJ(constraint_network, current_index + 1, assigned_values)
             if result:
                 return True, -1
             assigned_values.pop()
-            inconsistency_index_list.append(inconsistency_index)
+            max_jump_level = max(max_jump_level, inconsistency_index)
             if inconsistency_index < current_index:
-                return False, max(inconsistency_index_list)
-        return False, max(inconsistency_index_list)
+                return False, max(max_jump_level, inconsistency_index)
+        return False, max_jump_level
 
 
     def CBJ(cn, i, A, CS):
