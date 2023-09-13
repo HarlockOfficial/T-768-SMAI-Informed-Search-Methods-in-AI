@@ -1,6 +1,3 @@
-import math
-
-
 class Estimator:
 
     def __init__(self, num_gates, capacity, avg, std):
@@ -27,6 +24,12 @@ class InformedEstimator(Estimator):
         return
 
     def get_giveaway(self, gates):
-        # You implement this.
         # Estimate the future giveaway for the partially filled boxes at the gates.
-        return 0
+        space_left_in_gates = [self.capacity - gate for gate in gates]
+        esitmated_giveaway_avg = [-(space_left - (((space_left // self.avg) + 1) * self.avg)) if space_left % self.avg > 0 else 0 for space_left in space_left_in_gates]
+        estimated_giveaway_range = [(estimated_avg - self.std, estimated_avg + self.std)
+                                    for estimated_avg in esitmated_giveaway_avg]
+        total_giveaway = (sum([estimated_range[0] for estimated_range in estimated_giveaway_range]),
+                          sum([estimated_avg for estimated_avg in esitmated_giveaway_avg]),
+                          sum([estimated_range[1] for estimated_range in estimated_giveaway_range]))
+        return total_giveaway
