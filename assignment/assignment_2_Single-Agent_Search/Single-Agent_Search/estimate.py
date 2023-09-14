@@ -32,4 +32,4 @@ class InformedEstimator(Estimator):
         total_giveaway = (sum([estimated_range[0] for estimated_range in estimated_giveaway_range]),
                           sum([estimated_avg for estimated_avg in esitmated_giveaway_avg]),
                           sum([estimated_range[1] for estimated_range in estimated_giveaway_range]))
-        return total_giveaway
+        return total_giveaway[0]
