@@ -50,7 +50,7 @@ print("Read in weight of", len(weights), "items (", avg, round(std, 2), ")")
 
 # Get the heuristic for estimating future giveaway. Plot, if asked to.
 if args['improved']:
-    giveaway_estimator = estimate.InformedEstimator(args['gates'], args['boxcap'], avg, std)
+    giveaway_estimator = estimate.InformedEstimator(args['gates'], args['boxcap'], avg, std, args['cars'])
 else:
     giveaway_estimator = estimate.Estimator(args['gates'], args['boxcap'], avg, std)
 if args['plot']:
@@ -58,6 +58,7 @@ if args['plot']:
     for c in range(0, args['boxcap']):
         D.append(giveaway_estimator.get_giveaway([c]))
     plt.plot(D)
+    plt.grid()
     plt.show()
     exit()
 
