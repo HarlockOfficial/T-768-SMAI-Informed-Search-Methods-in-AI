@@ -1,8 +1,9 @@
 import math
 
+PRECISION = 0.001
+
 
 class Estimator:
-
     def __init__(self, num_gates, capacity, avg, std):
         assert (num_gates > 0)
         self.num_gates = num_gates
@@ -13,6 +14,10 @@ class Estimator:
     def get_giveaway(self, gates):
         # Estimate the future giveaway for the partially filled boxes at the gates.
         return 0
+
+
+def _trim_gate_weight(gate: float):
+    return math.floor(gate / PRECISION) * PRECISION
 
 
 class InformedEstimator(Estimator):
@@ -28,7 +33,7 @@ class InformedEstimator(Estimator):
                 yield start
                 start += step
         self.precomputed_values = {}
-        for i in float_range(0, self.capacity, 0.001):
+        for i in float_range(0, self.capacity, PRECISION):
             self.precomputed_values[i] = self.get_giveaway([i])
 
     def __compute_giveaway(self, gate: float):
@@ -39,7 +44,8 @@ class InformedEstimator(Estimator):
         return estimated_avg - self.std, estimated_avg, estimated_avg + self.std
 
     def get_giveaway(self, gates):
-        for gate in gates:
+        trimmed_gates = [_trim_gate_weight(gate) for gate in gates]
+        for gate in trimmed_gates:
             if gate not in self.precomputed_values:
                 self.precomputed_values[gate] = self.__compute_giveaway(gate)[0]
-        return sum([self.precomputed_values.get(gate) for gate in gates])
+        return sum([self.precomputed_values.get(gate) for gate in trimmed_gates])
