@@ -23,8 +23,12 @@ class InformedEstimator(Estimator):
         return
 
     def compute(self):
+        def float_range(start: float, stop: float, step: float):
+            while start < stop:
+                yield start
+                start += step
         self.precomputed_values = {}
-        for i in range(self.capacity):
+        for i in float_range(0, self.capacity, 0.001):
             self.precomputed_values[i] = self.get_giveaway([i])
 
     def __compute_giveaway(self, gate: float):
