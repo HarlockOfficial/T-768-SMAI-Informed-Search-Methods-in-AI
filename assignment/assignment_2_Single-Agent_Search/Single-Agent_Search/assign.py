@@ -68,7 +68,7 @@ class Assign:
 
                 current_gate = ordered_gates[gate][0]
                 gate_state[current_depth] = do_assign(cars[current_depth], current_gate)
-                total_established_giveaway = sum([gate_state[_][1] for _ in range(current_depth + 1)])
+                total_established_giveaway = sum([gate_state[depth_index][1] for depth_index in range(current_depth + 1)])
                 current_solution[current_depth] = current_gate
 
                 if current_depth == 0:
@@ -83,7 +83,6 @@ class Assign:
 
                 if current_depth < global_depth_boundary:
                     iddfbnb_rec(current_depth + 1, last_giveaway_update_depth, best_current_car_fit)
-
                 else:
                     giveaway_estimate = self.estimator.get_giveaway(gates)
                     if total_established_giveaway + giveaway_estimate < best_giveaway[current_depth]:
