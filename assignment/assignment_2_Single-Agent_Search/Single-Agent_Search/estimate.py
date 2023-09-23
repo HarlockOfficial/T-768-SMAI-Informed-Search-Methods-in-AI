@@ -38,9 +38,9 @@ class InformedEstimator(Estimator):
             self.precomputed_values[i] = self.get_giveaway([i])
         """
         
-        k = 16
+        leakage_constant = 16
         #return [max(0, w - (self.capacity - self.avg)) for w in range(self.capacity)]
-        return [w // k + max(0, (-w // k) + w - (self.capacity - self.avg)) for w in range(self.capacity)]
+        return [weight // leakage_constant + max(0, (-weight // leakage_constant) + weight - (self.capacity - self.avg)) for weight in range(self.capacity)]
 
     def __compute_giveaway(self, gate: float):
         space_left = self.capacity - gate
