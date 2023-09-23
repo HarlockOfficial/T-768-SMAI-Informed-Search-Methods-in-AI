@@ -48,7 +48,7 @@ class Assign:
         # Suggestion: Use an iterative-deepening version of DFBnB.
         # Call 'self.estimator.get_giveaway(gates)' for the heuristic estimate of future giveaway
 
-        def sort_gates(gates):
+        def sort_gates_by_weight(gates):
             sorted_gates = []
             for i, gate_weight in enumerate(gates):
                 sorted_gates.append((i, gate_weight))
@@ -56,11 +56,16 @@ class Assign:
 
             return sorted_gates
 
+
         def iddfbnb_rec(current_depth, last_giveaway_update_depth, best_current_car_fit):
 
-            ordered_gates = sort_gates(gates)
+            ordered_gates = sort_gates_by_weight(gates)
 
             for gate in range(len(gates)):
+
+                if time_is_up(begin_time, time):
+                    return False
+
                 current_gate = ordered_gates[gate][0]
                 gate_state[current_depth] = do_assign(cars[current_depth], current_gate)
                 total_established_giveaway = sum([gate_state[_][1] for _ in range(current_depth + 1)])
@@ -86,9 +91,9 @@ class Assign:
                         last_giveaway_update_depth = current_depth
                         best_current_car_fit[:] = current_solution[:]
                 undo_assign(cars[current_depth], current_gate, gate_state[current_depth])
-                if time_is_up(begin_time, time):
-                    return False
 
+
+        previous_iteration_most_promising_gate = -1
         max_depth = len(cars)
         max_giveaway = float('inf')
 
