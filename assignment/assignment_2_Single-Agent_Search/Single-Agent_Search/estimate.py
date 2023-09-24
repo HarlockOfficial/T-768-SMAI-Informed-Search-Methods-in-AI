@@ -1,6 +1,5 @@
-import math
-
-PRECISION = 0.001
+PRECISION = 0.05
+NUMBERS_AFTER_DECIMAL = 2
 
 
 class Estimator:
@@ -16,8 +15,8 @@ class Estimator:
         return 0
 
 
-def _trim_gate_weight(gate: float):
-    return math.floor(gate / PRECISION) * PRECISION
+def _trim_gate(gate: float) -> float:
+    return round(PRECISION * round(gate / PRECISION), NUMBERS_AFTER_DECIMAL)
 
 
 class InformedEstimator(Estimator):
@@ -28,19 +27,19 @@ class InformedEstimator(Estimator):
         return
 
     def compute(self):
-        """
         def float_range(start: float, stop: float, step: float):
             while start < stop:
                 yield start
                 start += step
-        self.precomputed_values = {}
-        for i in float_range(0, self.capacity, PRECISION):
-            self.precomputed_values[i] = self.get_giveaway([i])
+        self.precomputed_values = dict()
+        for i in float_range(0, self.capacity+PRECISION, PRECISION):
+            trimmed_gate = _trim_gate(i)
+            self.precomputed_values[trimmed_gate] = self.__compute_giveaway(trimmed_gate)[0]
         """
-        
         leakage_constant = 16
         #return [max(0, w - (self.capacity - self.avg)) for w in range(self.capacity)]
         return [weight // leakage_constant + max(0, (-weight // leakage_constant) + weight - (self.capacity - self.avg)) for weight in range(self.capacity)]
+        """
 
     def __compute_giveaway(self, gate: float):
         space_left = self.capacity - gate
@@ -50,11 +49,5 @@ class InformedEstimator(Estimator):
         return estimated_avg - self.std, estimated_avg, estimated_avg + self.std
 
     def get_giveaway(self, gates):
-        """
-        trimmed_gates = [_trim_gate_weight(gate) for gate in gates]
-        for gate in trimmed_gates:
-            if gate not in self.precomputed_values:
-                self.precomputed_values[gate] = self.__compute_giveaway(gate)[0]
-        return sum([self.precomputed_values.get(gate) for gate in trimmed_gates])
-        """
-        return sum([self.compute()[weight] for weight in gates])
+        return sum([self.precomputed_values[_trim_gate(gate)] for gate in gates])
+        # return sum([self.compute()[weight] for weight in gates])
