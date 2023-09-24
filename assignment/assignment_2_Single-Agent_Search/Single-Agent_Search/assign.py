@@ -56,7 +56,6 @@ class Assign:
 
             return sorted_gates
 
-
         def iddfbnb_rec(current_depth, last_giveaway_update_depth, best_current_car_fit):
 
             ordered_gates = sort_gates_by_weight(gates)

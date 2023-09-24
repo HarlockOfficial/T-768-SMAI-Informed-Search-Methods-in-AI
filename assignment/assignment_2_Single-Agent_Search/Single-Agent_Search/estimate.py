@@ -27,6 +27,7 @@ class InformedEstimator(Estimator):
         return
 
     def compute(self):
+        """
         def float_range(start: float, stop: float, step: float):
             while start < stop:
                 yield start
@@ -37,9 +38,10 @@ class InformedEstimator(Estimator):
             self.precomputed_values[trimmed_gate] = self.__compute_giveaway(trimmed_gate)[0]
         """
         leakage_constant = 16
-        #return [max(0, w - (self.capacity - self.avg)) for w in range(self.capacity)]
-        return [weight // leakage_constant + max(0, (-weight // leakage_constant) + weight - (self.capacity - self.avg)) for weight in range(self.capacity)]
-        """
+        self.precomputed_values = dict()
+        for weight in range(self.capacity):
+            self.precomputed_values[weight] = weight // leakage_constant + max(0, (-weight // leakage_constant) +
+                                                                               weight - (self.capacity - self.avg))
 
     def __compute_giveaway(self, gate: float):
         space_left = self.capacity - gate
@@ -49,5 +51,5 @@ class InformedEstimator(Estimator):
         return estimated_avg - self.std, estimated_avg, estimated_avg + self.std
 
     def get_giveaway(self, gates):
-        return sum([self.precomputed_values[_trim_gate(gate)] for gate in gates])
-        # return sum([self.compute()[weight] for weight in gates])
+        #return sum([self.precomputed_values[_trim_gate(gate)] for gate in gates])
+        return sum(self.precomputed_values[weight] for weight in gates)
