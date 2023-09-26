@@ -1,5 +1,4 @@
-LEAKAGE_CONSTANT = 16
-
+import math
 
 class Estimator:
     def __init__(self, num_gates, capacity, avg, std):
@@ -22,9 +21,10 @@ class InformedEstimator(Estimator):
         return
 
     def compute(self):
+        leakage = 14*(3 ** self.num_gates)
         self.precomputed_values = dict()
         for weight in range(self.capacity):
-            w1 = weight // LEAKAGE_CONSTANT
+            w1 = weight//leakage
             self.precomputed_values[weight] = w1 + max(0, weight - self.capacity + self.avg - w1)
 
     def get_giveaway(self, gates):
