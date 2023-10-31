@@ -1,3 +1,6 @@
 [submodule "assignment/assignment_3_Game_Tree_Search"]
 	path = assignment/assignment_3_Game_Tree_Search
 	url = https://github.com/damiano00/ISMAI_assignment_3_GTS.git
+[submodule "assignment/assignment_4_AlphaZero"]
+	path = assignment/assignment_4_AlphaZero
+	url = https://github.com/HarlockOfficial/T-768-SMAI-Assignment-4-AlphaZero.git
